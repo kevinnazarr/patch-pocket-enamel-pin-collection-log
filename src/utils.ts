@@ -18,7 +18,7 @@ export const filterPins = (
   let result = pins
 
   if (search.trim()) {
-    const q = search.toLowerCase()
+    const q = search.trim().toLowerCase()
     result = result.filter(p =>
       p.name.toLowerCase().includes(q) || p.artistOrSeries.toLowerCase().includes(q)
     )

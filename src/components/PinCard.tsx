@@ -3,6 +3,7 @@ import type { Pin, ColorTag } from '../types'
 interface PinCardProps {
   pin: Pin
   onEdit: (pin: Pin) => void
+  onDelete: (id: string) => void
 }
 
 const colorMap: Record<ColorTag, string> = {
@@ -21,9 +22,16 @@ const colorLabel: Record<ColorTag, string> = {
   dark: 'Dark'
 }
 
-export default function PinCard({ pin, onEdit }: PinCardProps) {
+export default function PinCard({ pin, onEdit, onDelete }: PinCardProps) {
   const bgColor = colorMap[pin.colorTag]
   const isRainbow = pin.colorTag === 'rainbow'
+  
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (confirm('Delete this pin?')) {
+      onDelete(pin.id)
+    }
+  }
   
   return (
     <article
@@ -52,25 +60,52 @@ export default function PinCard({ pin, onEdit }: PinCardProps) {
       tabIndex={0}
       onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onEdit(pin)}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#1a1a1a', flex: 1 }}>
-          {pin.name}
-        </h3>
-        {pin.isWishlist && (
-          <span style={{
-            background: '#ffebee',
-            color: '#c62828',
-            padding: '2px 8px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-            marginLeft: '8px'
-          }}>
-            Wishlist
-          </span>
-        )}
-      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px', gap: '8px' }}>
+         <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#1a1a1a', flex: 1, minWidth: 0 }}>
+           {pin.name}
+         </h3>
+         <div style={{ display: 'flex', gap: '4px', whiteSpace: 'nowrap' }}>
+           {pin.isWishlist && (
+             <span style={{
+               background: '#ffebee',
+               color: '#c62828',
+               padding: '2px 8px',
+               borderRadius: '4px',
+               fontSize: '12px',
+               fontWeight: 600
+             }}>
+               Wishlist
+             </span>
+           )}
+           <button
+             onClick={handleDelete}
+             title="Delete pin"
+             style={{
+               background: '#ffebee',
+               color: '#c62828',
+               border: 'none',
+               borderRadius: '4px',
+               padding: '2px 8px',
+               fontSize: '12px',
+               fontWeight: 600,
+               cursor: 'pointer',
+               transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)'
+             }}
+             onMouseEnter={e => {
+               const el = e.currentTarget
+               el.style.background = '#ef5350'
+               el.style.color = 'white'
+             }}
+             onMouseLeave={e => {
+               const el = e.currentTarget
+               el.style.background = '#ffebee'
+               el.style.color = '#c62828'
+             }}
+           >
+             ✕
+           </button>
+         </div>
+       </div>
 
       {pin.description && (
         <p style={{ fontSize: '14px', color: '#666', margin: '4px 0', lineHeight: 1.4 }}>
