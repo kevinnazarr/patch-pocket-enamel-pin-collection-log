@@ -43,6 +43,10 @@ function App() {
     setEditingPin(undefined)
   }
 
+  const handleDeletePin = (id: string) => {
+    setPins(pins.filter(p => p.id !== id))
+  }
+
   const handleReset = () => {
     setSearch('')
     setColorFilter('all')
@@ -210,7 +214,7 @@ function App() {
             gap: '16px'
           }}>
             {filtered.map(pin => (
-              <PinCard key={pin.id} pin={pin} onEdit={handleEditPin} />
+              <PinCard key={pin.id} pin={pin} onEdit={handleEditPin} onDelete={handleDeletePin} />
             ))}
           </div>
         )}

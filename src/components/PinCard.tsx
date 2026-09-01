@@ -3,6 +3,7 @@ import type { Pin, ColorTag } from '../types'
 interface PinCardProps {
   pin: Pin
   onEdit: (pin: Pin) => void
+  onDelete: (id: string) => void
 }
 
 const colorMap: Record<ColorTag, string> = {
@@ -21,9 +22,14 @@ const colorLabel: Record<ColorTag, string> = {
   dark: 'Dark'
 }
 
-export default function PinCard({ pin, onEdit }: PinCardProps) {
+export default function PinCard({ pin, onEdit, onDelete }: PinCardProps) {
   const bgColor = colorMap[pin.colorTag]
   const isRainbow = pin.colorTag === 'rainbow'
+  
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (window.confirm(`Delete "${pin.name}"?`)) onDelete(pin.id)
+  }
   
   return (
     <article
@@ -82,31 +88,42 @@ export default function PinCard({ pin, onEdit }: PinCardProps) {
         {pin.artistOrSeries}
       </p>
 
-      <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <span style={{
-          background: isRainbow ? 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0000ff, #ff00ff)' : bgColor,
-          color: ['pastel', 'silver'].includes(pin.colorTag) ? '#1a1a1a' : 'white',
-          padding: '4px 10px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          fontWeight: 600
-        }}>
-          {colorLabel[pin.colorTag]}
-        </span>
+       <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+         <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
+           <span style={{
+             background: isRainbow ? 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0000ff, #ff00ff)' : bgColor,
+             color: ['pastel', 'silver'].includes(pin.colorTag) ? '#1a1a1a' : 'white',
+             padding: '4px 10px',
+             borderRadius: '4px',
+             fontSize: '12px',
+             fontWeight: 600
+           }}>
+             {colorLabel[pin.colorTag]}
+           </span>
 
-        {!pin.isWishlist && (
-          <span style={{
-            background: pin.status === 'display' ? '#e8f5e9' : '#f5f5f5',
-            color: pin.status === 'display' ? '#1b5e20' : '#424242',
-            padding: '4px 10px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            fontWeight: 600
-          }}>
-            {pin.status === 'display' ? 'On Display' : 'In Storage'}
-          </span>
-        )}
-      </div>
+           {!pin.isWishlist && (
+             <span style={{
+               background: pin.status === 'display' ? '#e8f5e9' : '#f5f5f5',
+               color: pin.status === 'display' ? '#1b5e20' : '#424242',
+               padding: '4px 10px',
+               borderRadius: '4px',
+               fontSize: '12px',
+               fontWeight: 600
+             }}>
+               {pin.status === 'display' ? 'On Display' : 'In Storage'}
+             </span>
+           )}
+         </div>
+         
+         <div style={{ display: 'flex', gap: '4px' }}>
+           <button onClick={() => onEdit(pin)} style={{ padding: '4px 8px', fontSize: '12px', cursor: 'pointer', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: '4px', color: '#1976d2' }}>
+             ✏️
+           </button>
+           <button onClick={handleDelete} style={{ padding: '4px 8px', fontSize: '12px', cursor: 'pointer', background: '#ffebee', border: '1px solid #c62828', borderRadius: '4px', color: '#c62828' }}>
+             🗑️
+           </button>
+         </div>
+       </div>
     </article>
   )
 }
