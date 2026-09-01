@@ -9,16 +9,12 @@ import PinFilters from './components/PinFilters'
 import './App.css'
 
 function App() {
-  const [pins, setPins] = useState<Pin[]>([])
+  const [pins, setPins] = useState<Pin[]>(() => loadPins())
   const [search, setSearch] = useState('')
   const [colorFilter, setColorFilter] = useState<ColorFilter>('all')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [editingPin, setEditingPin] = useState<Pin | undefined>()
   const [isFormOpen, setIsFormOpen] = useState(false)
-
-  useEffect(() => {
-    setPins(loadPins())
-  }, [])
 
   useEffect(() => {
     savePins(pins)
